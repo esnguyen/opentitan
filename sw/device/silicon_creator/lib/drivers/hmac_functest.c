@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+#include <stdalign.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdalign.h>
 
 #include "sw/device/lib/arch/device.h"
 #include "sw/device/lib/base/macros.h"
@@ -93,7 +93,7 @@ static const uint32_t kGettysburgHmacSha256Digest[] = {
 };
 
 // The unaligned version of the kGettysburgPrelude is used to test
-typedef struct unalignedhash_t{
+typedef struct unalignedhash_t {
   char unused;
   const char payload[BUFFER_SIZE];
 } unalignedhash_t;
@@ -101,9 +101,10 @@ typedef struct unalignedhash_t{
 // This structure is used to ensure that the kGettysburgPrelude is not aligned
 // on a 4-byte boundary
 static alignas(sizeof(int32_t)) unalignedhash_t kGettysburgPreludeUnaligned = {
-    .payload = "Four score and seven years ago our fathers brought forth on this "
-               "continent, a new nation, conceived in Liberty, and dedicated to the "
-               "proposition that all men are created equal.",
+    .payload =
+        "Four score and seven years ago our fathers brought forth on this "
+        "continent, a new nation, conceived in Liberty, and dedicated to the "
+        "proposition that all men are created equal.",
 };
 
 rom_error_t hmac_hmac_sha256_test(void) {
@@ -122,7 +123,8 @@ rom_error_t hmac_hmac_sha256_test(void) {
 
 rom_error_t hmac_hmac_sha256_unaligned_test(void) {
   hmac_digest_t digest;
-  hmac_hmac_sha256(kGettysburgPreludeUnaligned.payload, sizeof(kGettysburgPreludeUnaligned.payload) - 1, kHmacKey,
+  hmac_hmac_sha256(kGettysburgPreludeUnaligned.payload,
+                   sizeof(kGettysburgPreludeUnaligned.payload) - 1, kHmacKey,
                    /*big_endian_digest=*/false, &digest);
   const size_t len = ARRAYSIZE(digest.digest);
   for (int i = 0; i < len; ++i) {

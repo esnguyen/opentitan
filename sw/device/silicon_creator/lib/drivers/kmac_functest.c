@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+#include <stdalign.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdalign.h>
 
 #include "sw/device/lib/runtime/log.h"
 #include "sw/device/lib/runtime/print.h"
@@ -33,8 +33,10 @@ typedef struct unalignedhash_t {
 
 static alignas(sizeof(uint32_t)) unalignedhash_t kKMAC_test_data = {
     .short_payload = "Test message!",
-    .long_payload = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv"
-    "wxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    .long_payload =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr"
+        "stuv"
+        "wxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
 };
 
 /**
@@ -117,8 +119,7 @@ rom_error_t kmac_shake256_unalign_test(void) {
 
   // Simple test for unalign.
   RETURN_IF_ERROR(shake256_test(SHORT_MSG_LEN, kKMAC_test_data.short_payload,
-                                ARRAYSIZE(short_msg_digest),
-                                short_msg_digest));
+                                ARRAYSIZE(short_msg_digest), short_msg_digest));
 
   // Test with unalign long input, short output.
   RETURN_IF_ERROR(shake256_test(LONG_MSG_LEN, kKMAC_test_data.long_payload, 1,
