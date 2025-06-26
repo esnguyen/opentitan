@@ -29,7 +29,7 @@ static alignas(uint32_t) const char kGettysburgPrelude[] =
 enum {
   kSha256BlockBits = 512,
   kSha256BlockBytes = kSha256BlockBits / 8,
-  kGettysburgPreludeSize =  sizeof(kGettysburgPrelude),
+  kGettysburgPreludeSize = sizeof(kGettysburgPrelude),
 };
 
 // The following shell command will produce the sha256sum and convert the
@@ -98,7 +98,7 @@ typedef struct unalignedhash {
 
 // This structure is used to ensure that the kGettysburgPrelude is not aligned
 // on a 4-byte boundary
-static alignas(uint32_t) unalignedhash_t kGettysburgPreludeUnaligned = {
+static const alignas(uint32_t) unalignedhash_t kGettysburgPreludeUnaligned = {
     .payload =
         "Four score and seven years ago our fathers brought forth on this "
         "continent, a new nation, conceived in Liberty, and dedicated to the "
