@@ -20,18 +20,20 @@
 
 OTTF_DEFINE_TEST_CONFIG();
 
-#define SHORT_DIGEST_LEN 8
-#define LONG_DIGEST_LEN 75
-#define SHORT_MSG_LEN 13
-#define LONG_MSG_LEN 26 * 4
+enum{
+  SHORT_DIGEST_LEN = 8,
+  LONG_DIGEST_LEN = 75,
+  SHORT_MSG_LEN = 13,
+  LONG_MSG_LEN = 26 * 4,
+};
 
-typedef struct unalignedhash_t {
+typedef struct unalignedhash{
   char unused;
   char short_payload[SHORT_MSG_LEN];
   char long_payload[LONG_MSG_LEN];
 } unalignedhash_t;
 
-static alignas(sizeof(uint32_t)) unalignedhash_t kKMAC_test_data = {
+static alignas(uint32_t) unalignedhash_t kKMAC_test_data = {
     .short_payload = "Test message!",
     .long_payload =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr"
@@ -43,7 +45,6 @@ static alignas(sizeof(uint32_t)) unalignedhash_t kKMAC_test_data = {
  * Test data: short message with short output.
  */
 static const char short_msg[] = "Test message!";
-static const size_t short_msg_len = SHORT_MSG_LEN;
 static const uint32_t short_msg_digest[SHORT_DIGEST_LEN] = {
     0x84f1c984, 0x7a0316bb, 0xe404cfed, 0x83f9078a,
     0x21491adc, 0xd6c30988, 0xc6822ff6, 0x20b73405,
@@ -55,7 +56,6 @@ static const uint32_t short_msg_digest[SHORT_DIGEST_LEN] = {
 static const char long_msg[] =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv"
     "wxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static const size_t long_msg_len = LONG_MSG_LEN;
 static const uint32_t long_msg_digest[LONG_DIGEST_LEN] = {
     0x262992ca, 0xe4790cf1, 0x7681c77f, 0xa5366b52, 0x86490a2f, 0xf072d4c9,
     0xd4ea499a, 0x7a192fd2, 0xe1156b59, 0xb8f00ad5, 0x2ff4ba7c, 0xdec27032,
@@ -100,14 +100,14 @@ rom_error_t kmac_shake256_test(void) {
   RETURN_IF_ERROR(kmac_shake256_configure());
 
   // Simple test.
-  RETURN_IF_ERROR(shake256_test(short_msg_len, short_msg,
+  RETURN_IF_ERROR(shake256_test(SHORT_MSG_LEN, short_msg,
                                 ARRAYSIZE(short_msg_digest), short_msg_digest));
 
   // Test with long input, short output.
-  RETURN_IF_ERROR(shake256_test(long_msg_len, long_msg, 1, long_msg_digest));
+  RETURN_IF_ERROR(shake256_test(LONG_MSG_LEN, long_msg, 1, long_msg_digest));
 
   // Test with long input, long output.
-  RETURN_IF_ERROR(shake256_test(long_msg_len, long_msg,
+  RETURN_IF_ERROR(shake256_test(LONG_MSG_LEN, long_msg,
                                 ARRAYSIZE(long_msg_digest), long_msg_digest));
 
   return kErrorOk;

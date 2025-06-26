@@ -20,19 +20,17 @@
 
 #include "hw/top_earlgrey/sw/autogen/top_earlgrey.h"
 
-// This is the size of the Gettysburg Address prelude, which is used as input
-#define BUFFER_SIZE sizeof(kGettysburgPrelude)
+// From: http://www.abrahamlincolnonline.org/lincoln/speeches/gettysburg.htm
+static alignas(uint32_t) const char kGettysburgPrelude[] =
+    "Four score and seven years ago our fathers brought forth on this "
+    "continent, a new nation, conceived in Liberty, and dedicated to the "
+    "proposition that all men are created equal.";
 
 enum {
   kSha256BlockBits = 512,
   kSha256BlockBytes = kSha256BlockBits / 8,
+  kGettysburgPreludeSize =  sizeof(kGettysburgPrelude),
 };
-
-// From: http://www.abrahamlincolnonline.org/lincoln/speeches/gettysburg.htm
-static const char kGettysburgPrelude[] =
-    "Four score and seven years ago our fathers brought forth on this "
-    "continent, a new nation, conceived in Liberty, and dedicated to the "
-    "proposition that all men are created equal.";
 
 // The following shell command will produce the sha256sum and convert the
 // digest into valid C hexadecimal constants:
@@ -93,14 +91,14 @@ static const uint32_t kGettysburgHmacSha256Digest[] = {
 };
 
 // The unaligned version of the kGettysburgPrelude is used to test
-typedef struct unalignedhash_t {
+typedef struct unalignedhash {
   char unused;
-  const char payload[BUFFER_SIZE];
+  const char payload[kGettysburgPreludeSize];
 } unalignedhash_t;
 
 // This structure is used to ensure that the kGettysburgPrelude is not aligned
 // on a 4-byte boundary
-static alignas(sizeof(int32_t)) unalignedhash_t kGettysburgPreludeUnaligned = {
+static alignas(uint32_t) unalignedhash_t kGettysburgPreludeUnaligned = {
     .payload =
         "Four score and seven years ago our fathers brought forth on this "
         "continent, a new nation, conceived in Liberty, and dedicated to the "
