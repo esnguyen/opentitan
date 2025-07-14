@@ -950,15 +950,14 @@ keyset = rule(
 )
 
 def _signature_test_impl(ctx):
-    _script = ctx.actions.declare_file("{}.bash".format(ctx.label.name))
+    script = ctx.actions.declare_file("{}.bash".format(ctx.label.name))
 
     files = [f.short_path for f in ctx.files.srcs]
-    joined = " ".join(files)
     ctx.actions.expand_template(
       template = ctx.file._script,
-      output = _script,
+      output = script,
       substitutions = {
-        "@FILES@": joined,
+        "@FILES@": " ".join(files),
         "@OPENTITANTOOL@": ctx.executable._opentitantool.short_path,
       },
       is_executable=True,
@@ -967,7 +966,7 @@ def _signature_test_impl(ctx):
     return [
         DefaultInfo(
             runfiles = ctx.runfiles(files=ctx.files.srcs + [ctx.executable._opentitantool]),
-            executable= _script,
+            executable= script,
         )
     ]
 
@@ -976,14 +975,14 @@ signature_test = rule(
   attrs = {
       "srcs": attr.label_list(allow_files=True, doc="help string"),
       "_script": attr.label(
-            default = Label("//rules/scripts:sival_signature_test.bash"),
+            default = "//rules/scripts:sival_signature_test.bash",
             doc = "The shell script to execute for the test.",
             allow_single_file = True,
             executable = True,
             cfg = "exec",
       ),
       "_opentitantool": attr.label(
-            default = Label("//sw/host/opentitantool:opentitantool"),
+            default = "//sw/host/opentitantool:opentitantool",
             executable = True,
             cfg = "exec",
             doc = "The opentitantool binary to use for signing.",

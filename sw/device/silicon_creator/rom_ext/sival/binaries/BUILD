@@ -51,7 +51,6 @@ exec_env_filegroup(
 filegroup(
     name = "signed_binaries",
     srcs = glob(["*.signed.bin"]),
-    visibility = ["//visibility:public"], # or specific packages
 )
 
 signature_test(
